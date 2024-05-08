@@ -6,9 +6,6 @@
 #define BUILTIN_LED_PIN 2
 
 uint8_t MAC[] = {0x78, 0x21, 0x84, 0xE1, 0x7E, 0xA0}; //для проверки отправителя
-
-int coef=1; //пересчёт значения энкодера в угол сервопривода
-int start_angle=90; //добавление при нуле энкодера
  
 Servo servo_h;
 Servo servo_v;
@@ -20,7 +17,7 @@ void setup()
   esp_now.begin();
   servo_h.attach(SERVO_H_PIN);
   servo_v.attach(SERVO_V_PIN);  
-  Serial.begin(9600);  
+//  Serial.begin(9600);  
 }
  
 void loop()
@@ -30,10 +27,10 @@ void loop()
     digitalWrite(BUILTIN_LED_PIN,1);
     //Serial.println(s.substring(2).toInt()*coef+start_angle);//debug
     if(s.startsWith("h=")){
-      servo_h.write(s.substring(2).toInt()*coef+start_angle);
+      servo_h.write(s.substring(2).toInt());
     }
     if(s.startsWith("v=")){
-      servo_v.write(s.substring(2).toInt()*coef+start_angle);
+      servo_v.write(s.substring(2).toInt());
     }
     esp_now.clr();    
     digitalWrite(BUILTIN_LED_PIN,0);
