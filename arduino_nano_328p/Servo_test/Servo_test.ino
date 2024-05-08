@@ -14,16 +14,7 @@ void setup()
  
 void loop()
 { 
-  Servo1.write(angle); 
-  delay(10);
-  angle++;
-  if(angle>180){
-    angle=0;
-    Servo1.write(angle);
-    delay(1000);
-  }
-  
-  
+ 
 
   if(Serial.available()){
     String received_string=Serial.readString();  
