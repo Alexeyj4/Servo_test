@@ -8,6 +8,7 @@
 #define BUILTIN_LED_PIN 2
 
 uint8_t MAC[] = {0x78, 0x21, 0x84, 0xE1, 0x35, 0xD0};
+int enc2servo_coef=2;
 int prev_h_angle=90;
 int prev_v_angle=90;
 
@@ -24,22 +25,22 @@ void setup()
   pinMode(ENC_V_B_PIN, INPUT_PULLUP);
   pinMode(BUILTIN_LED_PIN,OUTPUT);
   h_enc.attachFullQuad(ENC_H_A_PIN, ENC_H_B_PIN);
-  h_enc.setCount(90*4);
+  h_enc.setCount(90*4/enc2servo_coef);
   v_enc.attachFullQuad(ENC_V_A_PIN, ENC_V_B_PIN);
-  v_enc.setCount(90*4);
-  Serial.begin(9600);    
+  v_enc.setCount(90*4/enc2servo_coef);
+  Serial.begin(115200);    
 }
  
 void loop()
 {   
  
-  int h_enc_angle=(int32_t)(floor(h_enc.getCount()/4)); //0-180 
-  int v_enc_angle=(int32_t)(floor(v_enc.getCount()/4)); //0-180
+  int h_enc_angle=(int32_t)(floor(h_enc.getCount()/4)*enc2servo_coef); //(0-180)/enc2servo_coef
+  int v_enc_angle=(int32_t)(floor(v_enc.getCount()/4)*enc2servo_coef); //(0-180)/enc2servo_coef
   
   //выравнивание угла до диапазона 0-180:
   if(h_enc_angle>(180)){
     h_enc_angle=180;
-    h_enc.setCount(180*4);
+    h_enc.setCount(180*4/enc2servo_coef);
   }
   if(h_enc_angle<0){
     h_enc_angle=0;
@@ -47,7 +48,7 @@ void loop()
   }
   if(v_enc_angle>(180)){
     v_enc_angle=180;
-    v_enc.setCount(180*4);
+    v_enc.setCount(180*4/enc2servo_coef);
   }
   if(v_enc_angle<0){
     v_enc_angle=0;
@@ -78,7 +79,7 @@ void loop()
     delay(50);    
     digitalWrite(BUILTIN_LED_PIN,0); 
   }
-  delay(200);    
+  delay(50);    
 
 }
  

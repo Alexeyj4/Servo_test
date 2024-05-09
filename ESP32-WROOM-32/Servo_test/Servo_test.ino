@@ -17,7 +17,7 @@ void setup()
   esp_now.begin();
   servo_h.attach(SERVO_H_PIN);
   servo_v.attach(SERVO_V_PIN);  
-//  Serial.begin(9600);  
+  //Serial.begin(115200);  //debug
 }
  
 void loop()
