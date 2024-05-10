@@ -35,7 +35,7 @@ void setup()
   stepper1.setMaxSpeed(400);// установка макс. скорости в шагах/сек  
   stepper1.setAcceleration(500); // установка ускорения в шагах/сек/сек
   stepper2.setRunMode(FOLLOW_POS);// режим следования к целевй позиции  
-  stepper2.setMaxSpeed(400);// установка макс. скорости в шагах/сек  
+  stepper2.setMaxSpeed(400);// установка макс. скорости в шагах/сек  //предположительно 400-максимум
   stepper2.setAcceleration(500); // установка ускорения в шагах/сек/сек
   //Serial.begin(115200);  //debug
 }
@@ -50,7 +50,7 @@ void loop()
   if (!stepper2.tick()) { // просто крутим туды-сюды
     static bool dir;
     dir = !dir;
-    stepper2.setTarget(dir ? -200 : 200);
+    stepper2.setTarget(dir ? -2000 : 2000);
   }
   
   String s=esp_now.recvd();
