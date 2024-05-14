@@ -9,10 +9,11 @@
 #define POT_L_X_PIN 35 //left x pot pin //joystick
 #define POT_R_X_PIN 32 //right x pot pin //joystick
 #define BUILTIN_LED_PIN 2
-#define MOTOR_SPEED_2 3217
-#define MOTOR_SPEED_1 2339
-#define MOTOR_SPEED_-1 1520
-#define MOTOR_SPEED_-2 760
+#define POT_LEVEL_F_2 3217 //forward
+#define POT_LEVEL_F_1 2339 //forward
+#define POT_LEVEL_B_1 1520 //backward
+#define POT_LEVEL_B_2 760 //backward
+#define MAX_MOTOR_SPEED 400 //максимальная скорость шагового двигателя
 
 uint8_t MAC[] = {0x78, 0x21, 0x84, 0xE1, 0x35, 0xD0};
 int enc2servo_coef=2;
@@ -72,41 +73,58 @@ void loop()
   //проверка, был ли изменён h-угол, и установка нового угла, если да:
   if(h_angle!=prev_h_angle){
     digitalWrite(BUILTIN_LED_PIN,1);  
-    Serial.print("h=");  
-    Serial.println(h_angle);
+    Serial.print("h=");Serial.println(h_angle);
     esp_now.send("h="+String(h_angle));    
-    prev_h_angle=h_angle;    
-    delay(50); 
-    digitalWrite(BUILTIN_LED_PIN,0); 
+    prev_h_angle=h_angle;            
     delay(50);  
+    digitalWrite(BUILTIN_LED_PIN,0); 
   }
   
   //проверка, был ли изменён v-угол, и установка нового угла, если да:
   if(v_angle!=prev_v_angle){
     digitalWrite(BUILTIN_LED_PIN,1);  
-    Serial.print("v=");  
-    Serial.println(v_angle);
+    Serial.print("v=");Serial.println(v_angle);
     esp_now.send("v="+String(v_angle));    
     prev_v_angle=v_angle;
-    delay(50);    
-    digitalWrite(BUILTIN_LED_PIN,0); 
     delay(50); 
+    digitalWrite(BUILTIN_LED_PIN,0);
   }
 
-  //считывание левого с джойстика
+  //считывание левого с джойстика  
   int adc_left_x_joystick=analogRead(POT_L_X_PIN);
-  Serial.print("l=");
-  Serial.println(adc_left_x_joystick);
+  int l_speed;
+  if(adc_left_x_joystick<POT_LEVEL_B_2){ l_speed=int(-1*MAX_MOTOR_SPEED); }
+  if((POT_LEVEL_B_2<adc_left_x_joystick)and(adc_left_x_joystick<POT_LEVEL_B_1)){ l_speed=int(-1*MAX_MOTOR_SPEED/2); }
+  if((POT_LEVEL_B_1<adc_left_x_joystick)and(adc_left_x_joystick<POT_LEVEL_F_1)){ l_speed=0; }
+  if((POT_LEVEL_F_1<adc_left_x_joystick)and(adc_left_x_joystick<POT_LEVEL_F_2)){ l_speed=int(MAX_MOTOR_SPEED/2); }
+  if(POT_LEVEL_F_2<adc_left_x_joystick){ l_speed=MAX_MOTOR_SPEED; }    
+  if(prev_l_speed!=l_speed){//проверка, было ли изменение
+    digitalWrite(BUILTIN_LED_PIN,1);
+    Serial.print("l=");Serial.println(l_speed);
+    esp_now.send("l="+String(l_speed)); 
+    prev_l_speed=l_speed; 
+    delay(50);
+    digitalWrite(BUILTIN_LED_PIN,0); 
+  }
 
   //считывание правого с джойстика
   int adc_right_x_joystick=analogRead(POT_R_X_PIN);
-  Serial.print("r=");
-  Serial.println(adc_right_x_joystick);
-
-
+  int r_speed;
+  if(adc_right_x_joystick<POT_LEVEL_B_2){ r_speed=int(-1*MAX_MOTOR_SPEED); }
+  if((POT_LEVEL_B_2<adc_right_x_joystick)and(adc_right_x_joystick<POT_LEVEL_B_1)){ r_speed=int(-1*MAX_MOTOR_SPEED/2); }
+  if((POT_LEVEL_B_1<adc_right_x_joystick)and(adc_right_x_joystick<POT_LEVEL_F_1)){ r_speed=0; }
+  if((POT_LEVEL_F_1<adc_right_x_joystick)and(adc_right_x_joystick<POT_LEVEL_F_2)){ r_speed=int(MAX_MOTOR_SPEED/2); }
+  if(POT_LEVEL_F_2<adc_right_x_joystick){ r_speed=MAX_MOTOR_SPEED; }    
+  if(prev_r_speed!=r_speed){//проверка, было ли изменение
+    digitalWrite(BUILTIN_LED_PIN,1);
+    Serial.print("r=");Serial.println(r_speed);
+    esp_now.send("r="+String(r_speed)); 
+    prev_r_speed=r_speed; 
+    delay(50);
+    digitalWrite(BUILTIN_LED_PIN,0); 
+  }
   
-  
-     
+       
 
 }
  
