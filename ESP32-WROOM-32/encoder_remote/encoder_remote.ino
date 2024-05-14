@@ -5,12 +5,21 @@
 #define ENC_H_B_PIN 26 //horizontal control encoder B pin
 #define ENC_V_A_PIN 25 //vertical control encoder A pin
 #define ENC_V_B_PIN 33 //vertical control encoder B pin
+//При использовании WiFi для аналоговых входов используйте пины 32, 33, 34, 35, 36, 39. Остальные могут вызвать проблемы:
+#define POT_L_X_PIN 35 //left x pot pin //joystick
+#define POT_R_X_PIN 32 //right x pot pin //joystick
 #define BUILTIN_LED_PIN 2
+#define MOTOR_SPEED_2 3217
+#define MOTOR_SPEED_1 2339
+#define MOTOR_SPEED_-1 1520
+#define MOTOR_SPEED_-2 760
 
 uint8_t MAC[] = {0x78, 0x21, 0x84, 0xE1, 0x35, 0xD0};
 int enc2servo_coef=2;
-int prev_h_angle=90;
-int prev_v_angle=90;
+int prev_h_angle=90;//servo
+int prev_v_angle=90;//servo
+int prev_l_speed=0;//motor
+int prev_r_speed=0;//motor
 
 ESP32Encoder h_enc;
 ESP32Encoder v_enc;
@@ -23,6 +32,8 @@ void setup()
   pinMode(ENC_H_B_PIN, INPUT_PULLUP);
   pinMode(ENC_V_A_PIN, INPUT_PULLUP);
   pinMode(ENC_V_B_PIN, INPUT_PULLUP);
+  pinMode(POT_L_X_PIN, INPUT);
+  pinMode(POT_R_X_PIN, INPUT);  
   pinMode(BUILTIN_LED_PIN,OUTPUT);
   h_enc.attachFullQuad(ENC_H_A_PIN, ENC_H_B_PIN);
   h_enc.setCount(90*4/enc2servo_coef);
@@ -66,7 +77,8 @@ void loop()
     esp_now.send("h="+String(h_angle));    
     prev_h_angle=h_angle;    
     delay(50); 
-    digitalWrite(BUILTIN_LED_PIN,0);  
+    digitalWrite(BUILTIN_LED_PIN,0); 
+    delay(50);  
   }
   
   //проверка, был ли изменён v-угол, и установка нового угла, если да:
@@ -78,8 +90,23 @@ void loop()
     prev_v_angle=v_angle;
     delay(50);    
     digitalWrite(BUILTIN_LED_PIN,0); 
+    delay(50); 
   }
-  delay(50);    
+
+  //считывание левого с джойстика
+  int adc_left_x_joystick=analogRead(POT_L_X_PIN);
+  Serial.print("l=");
+  Serial.println(adc_left_x_joystick);
+
+  //считывание правого с джойстика
+  int adc_right_x_joystick=analogRead(POT_R_X_PIN);
+  Serial.print("r=");
+  Serial.println(adc_right_x_joystick);
+
+
+  
+  
+     
 
 }
  
