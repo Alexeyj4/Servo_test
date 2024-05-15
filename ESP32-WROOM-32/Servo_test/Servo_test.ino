@@ -33,7 +33,7 @@ void setup()
   servo_v.attach(SERVO_V_PIN);  
   stepper1.setRunMode(FOLLOW_POS);// режим следования к целевй позиции  
   stepper1.setMaxSpeed(400);// установка макс. скорости в шагах/сек  
-  stepper1.setAcceleration(500); // установка ускорения в шагах/сек/сек
+  stepper1.setAcceleration(5000); // установка ускорения в шагах/сек/сек
   stepper2.setRunMode(FOLLOW_POS);// режим следования к целевй позиции  
   stepper2.setMaxSpeed(400);// установка макс. скорости в шагах/сек  //предположительно 400-максимум
   stepper2.setAcceleration(5000); // установка ускорения в шагах/сек/сек
@@ -42,6 +42,7 @@ void setup()
  
 void loop()
 { 
+  stepper1.tick();
   stepper2.tick();
  
   String s=esp_now.recvd();
