@@ -64,11 +64,11 @@ void loop()
       }
       if(l_speed>0){
         stepper2.setMaxSpeed(abs(l_speed));
-        stepper2.setTarget(30000);      
+        stepper2.setTarget(-300000);      
       }
       if(l_speed<0){
         stepper2.setMaxSpeed(abs(l_speed));
-        stepper2.setTarget(-30000);      
+        stepper2.setTarget(300000);      
       }
     }
 
